@@ -1,0 +1,41 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+import '../models/model.dart';
+Future<http.Response> fetchPassengerDetails() {
+  return http.get(Uri.parse('https://api.instantwebtools.net/v1/passenger?page=0&size=10'));
+}
+
+Future<PassengerDetails?> fetchAlbum() async {
+  final response = await http
+      .get(Uri.parse('https://api.instantwebtools.net/v1/passenger?page=0&size=10'));
+
+  if (response.statusCode == 200) {
+    List myList = [];
+   var convertedResponse = jsonDecode(response.body);
+   if (kDebugMode) {
+     for (var result in convertedResponse["data"]) {
+       if (kDebugMode) {
+         print("su-" + result.toString());
+       }
+       Data details = Data(
+         sId: result["_id"],
+         name: result["name"],
+         trips: result["trips"],
+         //airline: result["airline"],
+         iV: result["__v"],
+       );
+       log(details.toString());
+     }
+   }
+
+
+
+  } else {
+
+    throw Exception('Failed to load album');
+  }
+}
